@@ -1,0 +1,10 @@
+# Default ignored files
+/shelf/
+/dags/config/config.py
+/workspace.xml
+/dags/config/__pycache__/
+/dags/__pycache__/
+/logs
+/.idea
+/*/.DS_Store
+.DS_Store

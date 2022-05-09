@@ -109,20 +109,21 @@ def get_hourly_stats(conn_string, sql_table_stats, local_path):
 def send_stats_email(receivers):
     """Extract df from local file, get data from the previous date, 
     store it locally, and send via email to receivers list."""
-    body = 'You\'re receiving this email because you\'re subscribed to the daily statistics of bitcoin stock exchange.' \
-           ' Please let %s know if you have any troubles with viewing it.' % config.sender_email
+    yesterday = date.today() - timedelta(days=1)
+    body = 'Hi! You\'re receiving this email because you\'re subscribed to the daily statistics of bitcoin stock exchange.' \
+           ' You can find attached daily crypto statistics for %s.' \
+           ' Please let %s know if you have any issues with viewing it.' % (yesterday.strftime('%d-%m-%Y'), config.sender_email) 
     sender_email = config.sender_email
     password = config.password
 
     # Create a multipart message and set headers
     message = MIMEMultipart()
-    message['Subject'] = 'Daily statistics of bitcoin stock exchange'
+    message['Subject'] = 'Daily statistics of bitcoin stock exchange - %s' % yesterday.strftime('%d-%m-%Y')
     # Add body to email
     message.attach(MIMEText(body, 'plain'))
 
     # getting statistics for the previous day and storing it as separate file
     hourly_stats = pd.read_csv('./data/processed/crypto_stats_hourly.csv', index_col=0)
-    yesterday = date.today() - timedelta(days=1)
     filter_query = pd.to_datetime(hourly_stats['timestamp']).dt.date == yesterday
     hourly_stats_yesterday = hourly_stats[filter_query]
     hourly_stats_yesterday.to_csv('./data/processed/hourly_stats_%s.csv' % yesterday)
